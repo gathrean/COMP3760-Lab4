@@ -1,5 +1,8 @@
 package com.example.lab4;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Graph class that represents a Graph data structure
  */
@@ -10,6 +13,9 @@ public class Graph {
     private String[] vertexLabels;
     private boolean isDirected;
     private int[][] adjacencyMatrix;
+
+    private List<String> dfsOrder = new ArrayList<>();
+    private List<String> finishedOrder = new ArrayList<>();
 
     /**
      * Constructor to initialize the Graph.
@@ -113,8 +119,10 @@ public class Graph {
      * @return - a string representation of the adjacency matrix
      */
     public String toString() {
+        // Create a StringBuilder object to store the result
         StringBuilder result = new StringBuilder();
 
+        // Loop through the adjacency matrix and append each element to the result
         for (int[] row : adjacencyMatrix) {
             for (int col : row) {
                 result.append(col).append(" ");
@@ -125,14 +133,77 @@ public class Graph {
         return result.toString();
     }
 
-    // performs Depth First Search
-    void runDFS(boolean quiet) {
+    /**
+     * Depth First Search (DFS) algorithm
+     * <p>
+     * Helper method for runDFS()
+     * </p>
+     *
+     * @param v       - the vertex to start the DFS from
+     * @param visited - boolean array to keep track of visited vertices
+     */
+    private void depthFirstSearchUtil(int v, boolean[] visited) {
+        visited[v] = true;
+        dfsOrder.add(vertexLabels[v]);
 
+        for (int i = 0; i < size; i++) {
+            if (adjacencyMatrix[v][i] == 1 && !visited[i]) {
+                depthFirstSearchUtil(i, visited);
+            }
+        }
+
+        finishedOrder.add(vertexLabels[v]);
     }
 
-    // performs Depth First Search at vertex v
-    void runDFS(String v, boolean quiet) {
+    /**
+     * Performs Depth First Search (DFS) on the graph.
+     *
+     * @param quiet - indicates whether to print the results or not
+     */
+    void runDFS(boolean quiet) {
+        // Mark all the vertices as not visited
+        boolean[] visited = new boolean[size];
 
+        // Call the recursive helper function to print DFS traversal
+        for (int i = 0; i < size; i++) {
+            if (!visited[i]) {
+                depthFirstSearchUtil(i, visited);
+            }
+        }
+
+        // Results when there's  no more unvisited vertices
+        if (!quiet) {
+            System.out.println("DFS Order: " + dfsOrder.toString());
+            System.out.println("Finished Order: " + finishedOrder.toString());
+        }
+    }
+
+    /**
+     * Performs Depth First Search (DFS) on the graph starting at vertex v.
+     *
+     * @param v     - the vertex to start the DFS from
+     * @param quiet - indicates whether to print the results or not
+     */
+    void runDFS(String v, boolean quiet) {
+        // Get the index of the vertex
+        int index = getIndex(v);
+
+        // Check if the vertex is valid
+        if (index != -1) {
+            // Mark all the vertices as not visited
+            boolean[] visited = new boolean[size];
+
+            // Call the recursive helper function to print DFS traversal
+            depthFirstSearchUtil(index, visited);
+
+            // Results when there's  no more unvisited vertices
+            if (!quiet) {
+                System.out.println("DFS Order: " + dfsOrder.toString());
+                System.out.println("Finished Order: " + finishedOrder.toString());
+            }
+        } else {
+            throw new IllegalArgumentException("Invalid vertex");
+        }
     }
 
     // performs Breadth First Search
