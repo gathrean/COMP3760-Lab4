@@ -1,7 +1,9 @@
 package com.example.lab4;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * Graph class that represents a Graph data structure
@@ -16,6 +18,8 @@ public class Graph {
 
     private List<String> dfsOrder = new ArrayList<>();
     private List<String> finishedOrder = new ArrayList<>();
+
+    private List<String> bfsOrder = new ArrayList<>();
 
     /**
      * Constructor to initialize the Graph.
@@ -206,14 +210,82 @@ public class Graph {
         }
     }
 
-    // performs Breadth First Search
-    void runBFS(boolean quiet) {
+    /**
+     * Helper method for runBFS() methods.
+     *
+     * @param v       - the vertex to start the BFS from
+     * @param visited - boolean array to keep track of visited vertices
+     */
+    private void breadthFirstSearchUtil(int v, boolean[] visited) {
+        // Create a queue for BFS
+        Queue<Integer> queue = new LinkedList<>();
 
+        // Mark the current node as visited and enqueue it
+        visited[v] = true;
+        queue.add(v);
+
+        // Loop through the queue
+        while (!queue.isEmpty()) {
+            v = queue.poll(); // Dequeue a vertex from queue and print it
+            bfsOrder.add(vertexLabels[v]); // Add the vertex to the BFS order
+
+            // Get all adjacent vertices of the dequeued vertex v
+            for (int i = 0; i < size; i++) {
+                if (adjacencyMatrix[v][i] == 1 && !visited[i]) {
+                    visited[i] = true;
+                    queue.add(i);
+                }
+            }
+        }
     }
 
-    // performs BFS starting at vertex v
-    void runBFS(String v, boolean quiet) {
+    /**
+     * Performs the Breadth First Search (BFS) algorithm on the graph.
+     *
+     * @param quiet - indicates whether to print the results or not
+     */
+    void runBFS(boolean quiet) {
+        // Mark all the vertices as not visited
+        boolean[] visited = new boolean[size];
 
+        // Recursion! Call the recursive helper function to print BFS traversal
+        for (int i = 0; i < size; i++) {
+            if (!visited[i]) {
+                breadthFirstSearchUtil(i, visited);
+            }
+        }
+
+        // Results when there's no more unvisited vertices
+        if (!quiet) {
+            System.out.println("BFS Order: " + bfsOrder.toString());
+        }
+    }
+
+    /**
+     * Performs the Breadth First Search (BFS) algorithm on the graph starting at vertex v.
+     *
+     * @param v     - the vertex to start the BFS from
+     * @param quiet - indicates whether to print the results or not
+     */
+    void runBFS(String v, boolean quiet) {
+        // Get the index of the vertex
+        int index = getIndex(v);
+
+        // Check if the vertex is valid
+        if (index != -1) {
+            // Mark all the vertices as not visited
+            boolean[] visited = new boolean[size];
+
+            // Recursion! Call the recursive helper function to print BFS traversal
+            breadthFirstSearchUtil(index, visited);
+
+            // Results when there's no more unvisited vertices
+            if (!quiet) {
+                System.out.println("BFS Order: " + bfsOrder.toString());
+            }
+        } else {
+            throw new IllegalArgumentException("Invalid vertex");
+        }
     }
 
     // gets result of the most recently performed DFS
