@@ -120,6 +120,7 @@ public class Graph {
      *
      * @return - a string representation of the adjacency matrix
      */
+    @Override
     public String toString() {
         // Create a StringBuilder object to store the result
         StringBuilder result = new StringBuilder();
@@ -136,25 +137,36 @@ public class Graph {
     }
 
     /**
-     * Depth First Search (DFS) algorithm
-     * <p>
-     * Helper method for runDFS()
-     * </p>
+     * Helper method to perform DFS on the graph.
      *
-     * @param v       - the vertex to start the DFS from
-     * @param visited - boolean array to keep track of visited vertices
+     * @param vertex  - the vertex to start the DFS from
+     * @param visited - the list of visited vertices
+     * @param quiet   - indicates whether to print the results or not
      */
-    private void depthFirstSearchUtil(int v, boolean[] visited) {
-        visited[v] = true;
-        dfsOrder.add(vertexLabels[v]);
+    public void runDFSHelper(String vertex, ArrayList<String> visited, boolean quiet) {
+        int index = getIndex(vertex);
+        visited.add(vertex);
+        dfsOrder.add(vertex);
 
+        boolean deadEnd = true;
+
+        // If not visited, visit.
+        if (!quiet) {
+            System.out.println("DFS visiting vertex " + vertex);
+        }
+
+        // Iterating through the adjacency matrix row corresponding to 'vertex'
         for (int i = 0; i < size; i++) {
-            if (adjacencyMatrix[v][i] == 1 && !visited[i]) {
-                depthFirstSearchUtil(i, visited);
+            if (adjacencyMatrix[index][i] == 1 && !visited.contains(vertexLabels[i])) {
+                // Recursion! If the vertex has not been visited, call the recursive helper function
+                runDFSHelper(vertexLabels[i], visited, quiet);
+                deadEnd = false;
             }
         }
 
-        finishedOrder.add(vertexLabels[v]);
+        if (deadEnd) {
+            finishedOrder.add(vertex);
+        }
     }
 
     /**
@@ -163,20 +175,12 @@ public class Graph {
      * @param quiet - indicates whether to print the results or not
      */
     void runDFS(boolean quiet) {
-        // Mark all the vertices as not visited
-        boolean[] visited = new boolean[size];
+        ArrayList<String> visited = new ArrayList<String>();
 
-        // Call the recursive helper function to print DFS traversal
-        for (int i = 0; i < size; i++) {
-            if (!visited[i]) {
-                depthFirstSearchUtil(i, visited);
+        for (String vertex : vertexLabels) {
+            if (!visited.contains(vertex)) {
+                runDFSHelper(vertex, visited, quiet);
             }
-        }
-
-        // Results when there's  no more unvisited vertices
-        if (!quiet) {
-            System.out.println("DFS Order: " + dfsOrder.toString());
-            System.out.println("Finished Order: " + finishedOrder.toString());
         }
     }
 
@@ -187,25 +191,8 @@ public class Graph {
      * @param quiet - indicates whether to print the results or not
      */
     void runDFS(String v, boolean quiet) {
-        // Get the index of the vertex
-        int index = getIndex(v);
-
-        // Check if the vertex is valid
-        if (index != -1) {
-            // Mark all the vertices as not visited
-            boolean[] visited = new boolean[size];
-
-            // Call the recursive helper function to print DFS traversal
-            depthFirstSearchUtil(index, visited);
-
-            // Results when there's  no more unvisited vertices
-            if (!quiet) {
-                System.out.println("DFS Order: " + dfsOrder.toString());
-                System.out.println("Finished Order: " + finishedOrder.toString());
-            }
-        } else {
-            throw new IllegalArgumentException("Invalid vertex");
-        }
+        ArrayList<String> visited = new ArrayList<>();
+        runDFSHelper(v, visited, quiet);
     }
 
     private void breadthFirstSearchUtil(int v, boolean[] visited, boolean quiet) {
@@ -213,22 +200,27 @@ public class Graph {
         visited[v] = true;
         queue.add(v);
 
-        while (!queue.isEmpty()) {
-            v = queue.poll();
-            bfsOrder.add(vertexLabels[v]);
+        if (!quiet) {
+            System.out.println("BFS visiting vertex " + vertexLabels[v]);
+        }
 
-            if (!quiet) {
-                System.out.println("BFS visiting vertex " + vertexLabels[v]);
-            }
+        while (!queue.isEmpty()) {
+            int current = queue.poll();
+            bfsOrder.add(vertexLabels[current]);
 
             for (int i = 0; i < size; i++) {
-                if (adjacencyMatrix[v][i] == 1 && !visited[i]) {
+                if (adjacencyMatrix[current][i] == 1 && !visited[i]) {
                     visited[i] = true;
                     queue.add(i);
+
+                    if (!quiet) {
+                        System.out.println("BFS visiting vertex " + vertexLabels[i]);
+                    }
                 }
             }
         }
     }
+
 
     /**
      * Performs the Breadth First Search (BFS) algorithm on the graph.
