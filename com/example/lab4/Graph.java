@@ -5,6 +5,12 @@ package com.example.lab4;
  */
 public class Graph {
 
+    // Instance variables
+    private int size;
+    private String[] vertexLabels;
+    private boolean isDirected;
+    private int[][] adjacencyMatrix;
+
     // Constructor
     Graph(String[] vertexLabels, boolean isDirected) {
 
