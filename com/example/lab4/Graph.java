@@ -26,14 +26,15 @@ public class Graph {
     /**
      * Constructor to initialize the Graph.
      *
-     * @param names - array of Strings that represent the names of the vertices
-     * @param isDirected   - indicates whether the graph is directed or not
+     * @param names      - array of Strings that represent the names of the vertices
+     * @param isDirected - indicates whether the graph is directed or not
      */
     Graph(String[] names, boolean isDirected) {
         this.size = names.length;
         this.names = names;
         this.isDirected = isDirected;
-        this.adjacencyMatrix = new int[size][size];
+
+        adjacencyMatrix = new int[size][size];
     }
 
     /**
@@ -94,7 +95,7 @@ public class Graph {
      * @return - the number of vertices in the graph
      */
     int size() {
-        return size;
+        return names.length;
     }
 
     /**
@@ -106,7 +107,7 @@ public class Graph {
      * @param v - an integer in the range 0 to N-1 inclusive.
      * @return - the name of the vertex numbered 'v' on your internal list of vertices.
      */
-    String getLabel(int v) {
+    public String getLabel(int v) {
         // Check if the vertex is valid
         if (v >= 0 && v < size) {
             return names[v];
