@@ -63,17 +63,13 @@ public class Graph {
      */
     void addEdge(String A, String B) {
         // Get the index of the source and destination vertices
-        int sourceIndex = getIndex(A);
-        int destinationIndex = getIndex(B);
+        int x = getIndex(A);
+        int y = getIndex(B);
 
-        // Check if the vertices are valid
-        if (sourceIndex != 1 && destinationIndex != 1) {
-            adjacencyMatrix[sourceIndex][destinationIndex] = 1;
-            if (!isDirected) {
-                adjacencyMatrix[destinationIndex][sourceIndex] = 1;
-            }
-        } else {
-            throw new IllegalArgumentException("Invalid vertices");
+        adjacencyMatrix[x][y] = 1;
+
+        if (!isDirected) {
+            adjacencyMatrix[y][x] = 1;
         }
     }
 
@@ -212,26 +208,19 @@ public class Graph {
         }
     }
 
-    /**
-     * Helper method for runBFS() methods.
-     *
-     * @param v       - the vertex to start the BFS from
-     * @param visited - boolean array to keep track of visited vertices
-     */
-    private void breadthFirstSearchUtil(int v, boolean[] visited) {
-        // Create a queue for BFS
+    private void breadthFirstSearchUtil(int v, boolean[] visited, boolean quiet) {
         Queue<Integer> queue = new LinkedList<>();
-
-        // Mark the current node as visited and enqueue it
         visited[v] = true;
         queue.add(v);
 
-        // Loop through the queue
         while (!queue.isEmpty()) {
-            v = queue.poll(); // Dequeue a vertex from queue and print it
-            bfsOrder.add(vertexLabels[v]); // Add the vertex to the BFS order
+            v = queue.poll();
+            bfsOrder.add(vertexLabels[v]);
 
-            // Get all adjacent vertices of the dequeued vertex v
+            if (!quiet) {
+                System.out.println("BFS visiting vertex " + vertexLabels[v]);
+            }
+
             for (int i = 0; i < size; i++) {
                 if (adjacencyMatrix[v][i] == 1 && !visited[i]) {
                     visited[i] = true;
@@ -247,17 +236,18 @@ public class Graph {
      * @param quiet - indicates whether to print the results or not
      */
     void runBFS(boolean quiet) {
-        // Mark all the vertices as not visited
         boolean[] visited = new boolean[size];
 
-        // Recursion! Call the recursive helper function to print BFS traversal
+        if (!quiet) {
+            System.out.println("BFS traversal of graph:");
+        }
+
         for (int i = 0; i < size; i++) {
             if (!visited[i]) {
-                breadthFirstSearchUtil(i, visited);
+                breadthFirstSearchUtil(i, visited, quiet);
             }
         }
 
-        // Results when there's no more unvisited vertices
         if (!quiet) {
             System.out.println("BFS Order: " + bfsOrder.toString());
         }
@@ -279,7 +269,7 @@ public class Graph {
             boolean[] visited = new boolean[size];
 
             // Recursion! Call the recursive helper function to print BFS traversal
-            breadthFirstSearchUtil(index, visited);
+            breadthFirstSearchUtil(index, visited, quiet);
 
             // Results when there's no more unvisited vertices
             if (!quiet) {
