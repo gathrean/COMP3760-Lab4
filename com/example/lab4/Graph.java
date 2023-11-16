@@ -12,7 +12,7 @@ public class Graph {
 
     // Instance variables
     private int size;
-    private String[] vertexLabels;
+    private String[] names;
     private boolean isDirected;
     private int[][] adjacencyMatrix;
 
@@ -26,12 +26,12 @@ public class Graph {
     /**
      * Constructor to initialize the Graph.
      *
-     * @param vertexLabels - array of Strings that represent the names of the vertices
+     * @param names - array of Strings that represent the names of the vertices
      * @param isDirected   - indicates whether the graph is directed or not
      */
-    Graph(String[] vertexLabels, boolean isDirected) {
-        this.size = vertexLabels.length;
-        this.vertexLabels = vertexLabels;
+    Graph(String[] names, boolean isDirected) {
+        this.size = names.length;
+        this.names = names;
         this.isDirected = isDirected;
         this.adjacencyMatrix = new int[size][size];
     }
@@ -81,7 +81,7 @@ public class Graph {
      */
     private int getIndex(String label) {
         for (int i = 0; i < size; i++) {
-            if (vertexLabels[i].equals(label)) {
+            if (names[i].equals(label)) {
                 return i;
             }
         }
@@ -109,7 +109,7 @@ public class Graph {
     String getLabel(int v) {
         // Check if the vertex is valid
         if (v >= 0 && v < size) {
-            return vertexLabels[v];
+            return names[v];
         } else { // Otherwise, throw an exception
             throw new IllegalArgumentException("Invalid vertex");
         }
@@ -157,9 +157,9 @@ public class Graph {
 
         // Iterating through the adjacency matrix row corresponding to 'vertex'
         for (int i = 0; i < size; i++) {
-            if (adjacencyMatrix[index][i] == 1 && !visited.contains(vertexLabels[i])) {
+            if (adjacencyMatrix[index][i] == 1 && !visited.contains(names[i])) {
                 // Recursion! If the vertex has not been visited, call the recursive helper function
-                runDFSHelper(vertexLabels[i], visited, quiet);
+                runDFSHelper(names[i], visited, quiet);
                 deadEnd = false;
             }
         }
@@ -177,7 +177,7 @@ public class Graph {
     void runDFS(boolean quiet) {
         ArrayList<String> visited = new ArrayList<String>();
 
-        for (String vertex : vertexLabels) {
+        for (String vertex : names) {
             if (!visited.contains(vertex)) {
                 runDFSHelper(vertex, visited, quiet);
             }
@@ -205,20 +205,20 @@ public class Graph {
     public void runBFSHelper(int vertex, ArrayList<String> visited, boolean quiet) {
         Queue<Integer> queue = new LinkedList<>();
         queue.add(vertex);
-        visited.add(vertexLabels[vertex]);
+        visited.add(names[vertex]);
 
         while (!queue.isEmpty()) {
             int v = queue.remove();
-            bfsOrder.add(vertexLabels[v]);
+            bfsOrder.add(names[v]);
 
             if (!quiet) {
-                System.out.println("BFS visiting vertex " + vertexLabels[v]);
+                System.out.println("BFS visiting vertex " + names[v]);
             }
 
             for (int i = 0; i < size; i++) {
-                if (adjacencyMatrix[v][i] == 1 && !visited.contains(vertexLabels[i])) {
+                if (adjacencyMatrix[v][i] == 1 && !visited.contains(names[i])) {
                     queue.add(i);
-                    visited.add(vertexLabels[i]);
+                    visited.add(names[i]);
                 }
             }
         }
@@ -233,7 +233,7 @@ public class Graph {
         ArrayList<String> visited = new ArrayList<>();
 
         for (int i = 0; i < size; i++) {
-            if (!visited.contains(vertexLabels[i])) {
+            if (!visited.contains(names[i])) {
                 runBFSHelper(i, visited, quiet);
             }
         }
