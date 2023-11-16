@@ -16,9 +16,11 @@ public class Graph {
     private boolean isDirected;
     private int[][] adjacencyMatrix;
 
+    // DFS instance variables
     private List<String> dfsOrder = new ArrayList<>();
     private List<String> finishedOrder = new ArrayList<>();
 
+    // BFS instance variable
     private List<String> bfsOrder = new ArrayList<>();
 
     /**
@@ -288,23 +290,43 @@ public class Graph {
         }
     }
 
-    // gets result of the most recently performed DFS
+    /**
+     * Gets result of the most recently performed DFS
+     *
+     * @return - a string containing the DFS order results of the most recently performed DFS
+     */
     String getLastDFSOrder() {
-
+        if (dfsOrder.isEmpty()) {
+            return "No DFS order found";
+        } else {
+            return dfsOrder.toString();
+        }
     }
 
-    // gets result of the most recently performed BFS
+    /**
+     * Gets result of the most recently performed BFS
+     *
+     * @return - a string containing the BFS order results of the most recently performed BFS
+     */
     String getLastBFSOrder() {
-
+        if (bfsOrder.isEmpty()) {
+            return "No BFS order found";
+        } else {
+            return bfsOrder.toString();
+        }
     }
 
-    // gets result of the most recently performed DFS
+    /**
+     * Gets result of the most recently performed DFS
+     *
+     * @return - a string containing the DFS order results of the most recently performed DFS
+     */
     String getLastDFSDeadEndOrder() {
-
+        if (finishedOrder.isEmpty()) {
+            return "No DFS order found";
+        } else {
+            return finishedOrder.toString();
+        }
     }
 
-    // gets result of the most recently performed BFS
-    String getLastBFSOrder() {
-
-    }
 }
