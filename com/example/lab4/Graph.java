@@ -107,9 +107,22 @@ public class Graph {
         }
     }
 
-    // returns a string representation of the adjacency matrix
-    String toString() {
+    /**
+     * Returns a string representation of the adjacency matrix.
+     *
+     * @return - a string representation of the adjacency matrix
+     */
+    public String toString() {
+        StringBuilder result = new StringBuilder();
 
+        for (int[] row : adjacencyMatrix) {
+            for (int col : row) {
+                result.append(col).append(" ");
+            }
+            result.append("\n");
+        }
+
+        return result.toString();
     }
 
     // performs Depth First Search
