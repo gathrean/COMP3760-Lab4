@@ -1,12 +1,14 @@
-package com.example.lab4;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
 /**
- * Graph class that represents a Graph data structure
+ * Gathrean Dela Cruz
+ * A01167248
+ * <p>
+ * This program represents a Graph with the ability to perform DFS
+ * and BFS, with some basic graph operations as well.
  */
 public class Graph {
 
@@ -14,7 +16,7 @@ public class Graph {
     private int size;
     private String[] names;
     private boolean isDirected;
-    private int[][] adjacencyMatrix;
+    int[][] adjacencyMatrix;
 
     // DFS instance variables
     private List<String> dfsOrder = new ArrayList<>();
@@ -94,7 +96,7 @@ public class Graph {
      *
      * @return - the number of vertices in the graph
      */
-    int size() {
+    public int size() {
         return names.length;
     }
 
@@ -108,12 +110,7 @@ public class Graph {
      * @return - the name of the vertex numbered 'v' on your internal list of vertices.
      */
     public String getLabel(int v) {
-        // Check if the vertex is valid
-        if (v >= 0 && v < size) {
-            return names[v];
-        } else { // Otherwise, throw an exception
-            throw new IllegalArgumentException("Invalid vertex");
-        }
+        return names[v];
     }
 
     /**
@@ -128,13 +125,14 @@ public class Graph {
 
         // Loop through the adjacency matrix and append each element to the result
         for (int[] row : adjacencyMatrix) {
+            // Loop through each column in the row
             for (int col : row) {
                 result.append(col).append(" ");
             }
             result.append("\n");
         }
 
-        return result.toString();
+        return result.toString().trim();
     }
 
     /**
@@ -158,16 +156,13 @@ public class Graph {
 
         // Iterating through the adjacency matrix row corresponding to 'vertex'
         for (int i = 0; i < size; i++) {
-            if (adjacencyMatrix[index][i] == 1 && !visited.contains(names[i])) {
+            if (adjacencyMatrix[index][i] == 1 && !visited.contains(getLabel(i))) {
                 // Recursion! If the vertex has not been visited, call the recursive helper function
-                runDFSHelper(names[i], visited, quiet);
-                deadEnd = false;
+                runDFSHelper(getLabel(i), visited, quiet);
             }
         }
-
-        if (deadEnd) {
-            finishedOrder.add(vertex);
-        }
+        // If the vertex is a dead end, add it to the finishedOrder list
+        finishedOrder.add(vertex);
     }
 
     /**
@@ -175,9 +170,14 @@ public class Graph {
      *
      * @param quiet - indicates whether to print the results or not
      */
-    void runDFS(boolean quiet) {
-        ArrayList<String> visited = new ArrayList<String>();
+    public void runDFS(boolean quiet) {
+        ArrayList<String> visited = new ArrayList<>();
 
+        // Clear the dfsOrder and finishedOrder lists
+        dfsOrder.clear();
+        finishedOrder.clear();
+
+        // Loop through each vertex in the graph
         for (String vertex : names) {
             if (!visited.contains(vertex)) {
                 runDFSHelper(vertex, visited, quiet);
@@ -193,6 +193,11 @@ public class Graph {
      */
     void runDFS(String v, boolean quiet) {
         ArrayList<String> visited = new ArrayList<>();
+
+        // Clear the dfsOrder and finishedOrder lists
+        dfsOrder.clear();
+        finishedOrder.clear();
+
         runDFSHelper(v, visited, quiet);
     }
 
@@ -203,23 +208,28 @@ public class Graph {
      * @param visited - the list of visited vertices
      * @param quiet   - indicates whether to print the results or not
      */
-    public void runBFSHelper(int vertex, ArrayList<String> visited, boolean quiet) {
-        Queue<Integer> queue = new LinkedList<>();
-        queue.add(vertex);
-        visited.add(names[vertex]);
+    public void runBFSHelper(String vertex, ArrayList<String> visited, boolean quiet) {
+        Queue<String> queue = new LinkedList<>();
 
+        // Add the vertex to the queue and mark it as visited
+        visited.add(vertex);
+        queue.add(vertex);
+        bfsOrder.add(vertex);
+
+        // While the queue is not empty, remove the first vertex in the queue
         while (!queue.isEmpty()) {
-            int v = queue.remove();
-            bfsOrder.add(names[v]);
+            String currentVertex = queue.poll();
+            int currentIndex = getIndex(currentVertex);
 
             if (!quiet) {
-                System.out.println("BFS visiting vertex " + names[v]);
+                System.out.println("BFS visiting vertex " + currentVertex);
             }
 
             for (int i = 0; i < size; i++) {
-                if (adjacencyMatrix[v][i] == 1 && !visited.contains(names[i])) {
-                    queue.add(i);
-                    visited.add(names[i]);
+                if (adjacencyMatrix[currentIndex][i] == 1 && !visited.contains(getLabel(i))) {
+                    queue.add(getLabel(i));
+                    visited.add(getLabel(i));
+                    bfsOrder.add(getLabel(i));
                 }
             }
         }
@@ -233,9 +243,12 @@ public class Graph {
     void runBFS(boolean quiet) {
         ArrayList<String> visited = new ArrayList<>();
 
-        for (int i = 0; i < size; i++) {
-            if (!visited.contains(names[i])) {
-                runBFSHelper(i, visited, quiet);
+        // Clear the bfsOrder list
+        bfsOrder.clear();
+
+        for (String vertex : names) {
+            if (!visited.contains(vertex)) {
+                runBFSHelper(vertex, visited, quiet);
             }
         }
     }
@@ -248,7 +261,31 @@ public class Graph {
      */
     void runBFS(String v, boolean quiet) {
         ArrayList<String> visited = new ArrayList<>();
-        runBFSHelper(getIndex(v), visited, quiet);
+
+        // Clear the bfsOrder list
+        bfsOrder.clear();
+
+        // Create a queue and add the starting vertex to it
+        Queue<String> queue = new LinkedList<>();
+        queue.add(v);
+        visited.add(v);
+
+        // While the queue is not empty, remove the first vertex in the queue
+        while (!queue.isEmpty()) {
+            String currentVertex = queue.poll();
+            bfsOrder.add(currentVertex);
+            if (!quiet) {
+                System.out.println("BFS visiting vertex " + currentVertex);
+            }
+
+            int currentIndex = getIndex(currentVertex);
+            for (int i = 0; i < size; i++) {
+                if (adjacencyMatrix[currentIndex][i] == 1 && !visited.contains(names[i])) {
+                    queue.add(getLabel(i));
+                    visited.add(getLabel(i));
+                }
+            }
+        }
     }
 
     /**
@@ -260,7 +297,7 @@ public class Graph {
         if (dfsOrder.isEmpty()) {
             return "No DFS order found";
         } else {
-            return dfsOrder.toString();
+            return String.join(", ", dfsOrder);
         }
     }
 
@@ -273,7 +310,7 @@ public class Graph {
         if (bfsOrder.isEmpty()) {
             return "No BFS order found";
         } else {
-            return bfsOrder.toString();
+            return String.join(", ", bfsOrder);
         }
     }
 
@@ -286,7 +323,7 @@ public class Graph {
         if (finishedOrder.isEmpty()) {
             return "No DFS order found";
         } else {
-            return finishedOrder.toString();
+            return String.join(", ", finishedOrder);
         }
     }
 
